@@ -1,0 +1,86 @@
+{
+  "name": "@octokit/action",
+  "version": "0.0.0-semantically-released",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "GitHub API client for GitHub Actions",
+  "scripts": {
+    "build": "pika build",
+    "lint": "prettier --check '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
+    "lint:fix": "prettier --write '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
+    "pretest": "npm run -s lint",
+    "test": "jest --coverage"
+  },
+  "repository": "https://github.com/octokit/action.js",
+  "keywords": [
+    "github",
+    "api",
+    "sdk",
+    "toolkit",
+    "github-action"
+  ],
+  "author": "Gregor Martynus (https://twitter.com/gr2m)",
+  "license": "MIT",
+  "devDependencies": {
+    "@pika/pack": "^0.5.0",
+    "@pika/plugin-build-node": "^0.6.1",
+    "@pika/plugin-ts-standard-pkg": "^0.6.1",
+    "@types/jest": "^24.0.18",
+    "@types/node": "^12.7.11",
+    "jest": "^24.9.0",
+    "prettier": "^1.18.2",
+    "semantic-release": "^15.13.24",
+    "semantic-release-plugin-update-version-in-files": "^1.0.0",
+    "ts-jest": "^24.1.0",
+    "typescript": "^3.6.3"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "coverageThreshold": {
+      "global": {
+        "statements": 100,
+        "branches": 100,
+        "functions": 100,
+        "lines": 100
+      }
+    }
+  },
+  "@pika/pack": {
+    "pipeline": [
+      [
+        "@pika/plugin-ts-standard-pkg"
+      ],
+      [
+        "@pika/plugin-build-node"
+      ]
+    ]
+  },
+  "release": {
+    "plugins": [
+      "@semantic-release/commit-analyzer",
+      "@semantic-release/release-notes-generator",
+      "@semantic-release/github",
+      [
+        "@semantic-release/npm",
+        {
+          "pkgRoot": "./pkg"
+        }
+      ],
+      [
+        "semantic-release-plugin-update-version-in-files",
+        {
+          "files": [
+            "dist-web/*",
+            "dist-node/*",
+            "*/version.*"
+          ]
+        }
+      ]
+    ]
+  },
+  "dependencies": {
+    "@octokit/auth-action": "^1.0.1",
+    "@octokit/core": "^1.2.0"
+  }
+}
