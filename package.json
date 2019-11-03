@@ -81,6 +81,6 @@
   },
   "dependencies": {
     "@octokit/auth-action": "^1.0.1",
-    "@octokit/core": "^1.2.0"
+    "@octokit/core": "^2.0.0"
   }
 }
