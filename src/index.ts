@@ -4,6 +4,6 @@ import { createActionAuth } from "@octokit/auth-action";
 import { VERSION } from "./version";
 
 export const Octokit = Core.defaults({
-  auth: createActionAuth(),
+  authStrategy: createActionAuth,
   userAgent: `octokit-action.js/${VERSION}`
 });
