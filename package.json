@@ -81,6 +81,8 @@
   },
   "dependencies": {
     "@octokit/auth-action": "^1.0.1",
-    "@octokit/core": "^2.0.0"
+    "@octokit/core": "^2.1.0",
+    "@octokit/plugin-paginate-rest": "^1.0.0",
+    "@octokit/types": "^2.0.0"
   }
 }
