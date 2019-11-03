@@ -28,4 +28,16 @@ describe("Smoke test", () => {
       "[@octokit/auth-action] `GITHUB_ACTION` environment variable is not set. @octokit/auth-action is meant to be used in GitHub Actions only."
     );
   });
+
+  it("It works when extended with another .plugin() call", () => {
+    process.env.GITHUB_TOKEN = "secret123";
+    process.env.GITHUB_ACTION = "test";
+
+    const MyOctokit = Octokit.plugin(() => {
+      return { foo: "bar" };
+    });
+    const octokit = new MyOctokit();
+    expect(typeof octokit.paginate).toBe("function");
+    expect(octokit.foo).toBe("bar");
+  });
 });
