@@ -14,6 +14,7 @@ import {
   Constructor
 } from "@octokit/core";
 
+/* istanbul ignore next */
 class CoreWithPluginsWorkaround extends CoreWithPlugins {
   static plugin<T extends OctokitPlugin | OctokitPlugin[]>(pluginOrPlugins: T) {
     const currentPlugins = this.plugins;
