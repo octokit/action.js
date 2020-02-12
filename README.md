@@ -32,6 +32,38 @@ const { Octokit } = require("@octokit/action");
 </tbody>
 </table>
 
+You can pass `secret.GITHUB_TOKEN` or any of your own secrets to a Node.js script. For example
+
+```yml
+name: My Node Action
+on:
+  - pull_request
+jobs:
+  my-action:
+    runs-on: ubuntu-latest
+    steps:
+      # Check out code using git
+      - uses: actions/checkout@v2
+      # Install Node 12
+      - uses: actions/setup-node@v1
+        with:
+          version: 12
+      # Node.js script can be anywhere. A good convention is to put local GitHub Actions
+      # into the `.github/actions` folder
+      - run: node .github/actions/my-script.js
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+Setting `GITHUB_TOKEN` on either [`with:`](https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idstepswith) or [`env:`](https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#env) will work.
+
+```js
+// .github/actions/my-script.js
+const octokit = new Octokit();
+
+// `octokit` is now authenticated using GITHUB_TOKEN
+```
+
 ### Create an issue using REST API
 
 ```js

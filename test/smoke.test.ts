@@ -3,7 +3,13 @@ import fetchMock from "fetch-mock";
 import { Octokit } from "../src";
 
 describe("Smoke test", () => {
-  it("happy path", () => {
+  beforeEach(() => {
+    delete process.env.GITHUB_TOKEN;
+    delete process.env.INPUT_GITHUB_TOKEN;
+    delete process.env.GITHUB_ACTION;
+  });
+
+  it("happy path with GITHUB_TOKEN", () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
 
@@ -11,19 +17,25 @@ describe("Smoke test", () => {
     expect(() => new Octokit()).not.toThrow();
   });
 
-  it("throws if GITHUB_TOKEN is not set", () => {
-    delete process.env.GITHUB_TOKEN;
+  it("happy path with INPUT_GITHUB_TOKEN", () => {
+    process.env.INPUT_GITHUB_TOKEN = "secret123";
+    process.env.GITHUB_ACTION = "test";
+
+    expect(Octokit).toBeInstanceOf(Function);
+    expect(() => new Octokit()).not.toThrow();
+  });
+
+  it("throws if neither GITHUB_TOKEN nor INPUT_GITHUB_TOKEN are set", () => {
     process.env.GITHUB_ACTION = "test";
 
     expect(Octokit).toBeInstanceOf(Function);
     expect(() => new Octokit()).toThrow(
-      "[@octokit/auth-action] `GITHUB_TOKEN` environment variable is not set. See https://help.github.com/en/articles/virtual-environments-for-github-actions#github_token-secret"
+      "[@octokit/auth-action] `GITHUB_TOKEN` variable is not set. It must be set on either `env:` or `with:`. See https://github.com/octokit/auth-action.js#createactionauth"
     );
   });
 
   it("throws if GITHUB_ACTION is not set", () => {
     process.env.GITHUB_TOKEN = "secret123";
-    delete process.env.GITHUB_ACTION;
 
     expect(Octokit).toBeInstanceOf(Function);
     expect(() => new Octokit()).toThrow(
