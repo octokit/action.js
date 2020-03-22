@@ -7,8 +7,8 @@ import { VERSION } from "./version";
 
 export const Octokit = Core.plugin([
   paginateRest,
-  restEndpointMethods
+  restEndpointMethods,
 ]).defaults({
   authStrategy: createActionAuth,
-  userAgent: `octokit-action.js/${VERSION}`
+  userAgent: `octokit-action.js/${VERSION}`,
 });

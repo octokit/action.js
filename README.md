@@ -74,7 +74,7 @@ const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
 const { data } = await octokit.request("POST /repos/:owner/:repo/issues", {
   owner,
   repo,
-  title: "My test issue"
+  title: "My test issue",
 });
 console.log("Issue created: %d", data.html_url);
 ```
@@ -100,7 +100,7 @@ const response = await octokit.graphql(
   `,
   {
     repositoryId,
-    title: "My test issue"
+    title: "My test issue",
   }
 );
 ```

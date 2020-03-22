@@ -64,23 +64,23 @@ describe("Smoke test", () => {
       { ok: true },
       {
         body: {
-          title: "My test issue"
-        }
+          title: "My test issue",
+        },
       }
     );
 
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock
-      }
+        fetch: mock,
+      },
     });
 
     // See https://developer.github.com/v3/issues/#create-an-issue
     const { data } = await octokit.request("POST /repos/:owner/:repo/issues", {
       owner: "octocat",
       repo: "hello-world",
-      title: "My test issue"
+      title: "My test issue",
     });
 
     expect(data).toStrictEqual({ ok: true });
@@ -95,23 +95,23 @@ describe("Smoke test", () => {
       { ok: true },
       {
         body: {
-          title: "My test issue"
-        }
+          title: "My test issue",
+        },
       }
     );
 
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock
-      }
+        fetch: mock,
+      },
     });
 
     // See https://developer.github.com/v3/issues/#create-an-issue
     const { data } = await octokit.issues.create({
       owner: "octocat",
       repo: "hello-world",
-      title: "My test issue"
+      title: "My test issue",
     });
 
     expect(data).toStrictEqual({ ok: true });
@@ -137,23 +137,23 @@ describe("Smoke test", () => {
           query,
           variables: {
             repositoryId: 123,
-            title: "My test issue"
-          }
-        }
+            title: "My test issue",
+          },
+        },
       }
     );
 
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock
-      }
+        fetch: mock,
+      },
     });
 
     // See https://developer.github.com/v3/issues/#create-an-issue
     const data = await octokit.graphql(query, {
       repositoryId: 123,
-      title: "My test issue"
+      title: "My test issue",
     });
 
     expect(data).toStrictEqual({ ok: true });
