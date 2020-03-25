@@ -5,10 +5,7 @@ import { restEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
 
-export const Octokit = Core.plugin([
-  paginateRest,
-  restEndpointMethods,
-]).defaults({
+export const Octokit = Core.plugin(paginateRest, restEndpointMethods).defaults({
   authStrategy: createActionAuth,
   userAgent: `octokit-action.js/${VERSION}`,
 });
