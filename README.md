@@ -109,6 +109,17 @@ const response = await octokit.graphql(
 
 `@octokit/action` is build upon `@octokit/core`. Refer to [its README](https://github.com/octokit/core.js#readme) for the full API documentation.
 
+### TypeScript: Endpoint method parameters and responses
+
+Types for endpoint method parameters and responses are exported as `RestEndpointMethodTypes`. They keys are the same as the endpoint methods. Here is an example to retrieve the parameter and response types for `octokit.checks.create()`
+
+```ts
+import { RestEndpointMethodTypes } from `@octokit/action`;
+
+type ChecksCreateParams = RestEndpointMethodTypes["checks"]["create"]["parameters"];
+type ChecksCreateResponse = RestEndpointMethodTypes["checks"]["create"]["response"];
+```
+
 ## How it works
 
 `@octokit/action` is simply a [`@octokit/core`](https://github.com/octokit/core.js#readme) constructor, pre-authenticate using [`@octokit/auth-action](https://github.com/octokit/auth-action.js#readme).
