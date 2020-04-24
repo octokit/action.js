@@ -25,7 +25,7 @@
   "dependencies": {
     "@octokit/auth-action": "^1.2.0",
     "@octokit/core": "^2.4.3",
-    "@octokit/plugin-paginate-rest": "^2.0.1",
+    "@octokit/plugin-paginate-rest": "^2.2.0",
     "@octokit/plugin-rest-endpoint-methods": "3.8.0",
     "@octokit/types": "^2.0.2"
   },
