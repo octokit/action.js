@@ -24,24 +24,24 @@
   "license": "MIT",
   "dependencies": {
     "@octokit/auth-action": "^1.2.0",
-    "@octokit/core": "^2.4.3",
+    "@octokit/core": "^2.5.0",
     "@octokit/plugin-paginate-rest": "^2.2.0",
-    "@octokit/plugin-rest-endpoint-methods": "3.11.0",
-    "@octokit/types": "^2.0.2"
+    "@octokit/plugin-rest-endpoint-methods": "3.12.2",
+    "@octokit/types": "^4.0.1"
   },
   "devDependencies": {
     "@pika/pack": "^0.5.0",
-    "@pika/plugin-build-node": "^0.9.0",
-    "@pika/plugin-ts-standard-pkg": "^0.9.0",
-    "@types/jest": "^25.1.0",
-    "@types/node": "^13.1.0",
-    "fetch-mock": "^9.0.0",
-    "jest": "^25.1.0",
-    "prettier": "^2.0.1",
-    "semantic-release": "^17.0.2",
+    "@pika/plugin-build-node": "^0.9.2",
+    "@pika/plugin-ts-standard-pkg": "^0.9.2",
+    "@types/jest": "^25.2.3",
+    "@types/node": "^14.0.1",
+    "fetch-mock": "^9.9.0",
+    "jest": "^26.0.1",
+    "prettier": "^2.0.5",
+    "semantic-release": "^17.0.7",
     "semantic-release-plugin-update-version-in-files": "^1.0.0",
-    "ts-jest": "^25.2.0",
-    "typescript": "^3.7.2"
+    "ts-jest": "^26.0.0",
+    "typescript": "^3.9.2"
   },
   "jest": {
     "preset": "ts-jest",
