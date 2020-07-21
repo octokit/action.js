@@ -75,7 +75,7 @@ const { data } = await octokit.request("POST /repos/:owner/:repo/issues", {
   repo,
   title: "My test issue",
 });
-console.log("Issue created: %d", data.html_url);
+console.log("Issue created: %s", data.html_url);
 ```
 
 You can also use `octokit.issues.create({ owner, repo, title })`. See the [REST endpoint methods plugin](https://github.com/octokit/plugin-rest-endpoint-methods.js/) for a list of all available methods.
