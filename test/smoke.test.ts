@@ -7,6 +7,7 @@ describe("Smoke test", () => {
     delete process.env.GITHUB_TOKEN;
     delete process.env.INPUT_GITHUB_TOKEN;
     delete process.env.GITHUB_ACTION;
+    delete process.env.GITHUB_API_URL;
   });
 
   it("happy path with GITHUB_TOKEN", () => {
@@ -20,6 +21,15 @@ describe("Smoke test", () => {
   it("happy path with INPUT_GITHUB_TOKEN", () => {
     process.env.INPUT_GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
+
+    expect(Octokit).toBeInstanceOf(Function);
+    expect(() => new Octokit()).not.toThrow();
+  });
+
+  it("happy path with GITHUB_API_URL", () => {
+    process.env.GITHUB_TOKEN = "secret123";
+    process.env.GITHUB_ACTION = "test";
+    process.env.GITHUB_API_URL = "https://10.1.1.1/api/v3";
 
     expect(Octokit).toBeInstanceOf(Function);
     expect(() => new Octokit()).not.toThrow();
