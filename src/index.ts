@@ -8,5 +8,10 @@ import { VERSION } from "./version";
 
 export const Octokit = Core.plugin(paginateRest, restEndpointMethods).defaults({
   authStrategy: createActionAuth,
+  baseUrl: getApiBaseUrl(),
   userAgent: `octokit-action.js/${VERSION}`,
 });
+
+function getApiBaseUrl(): string {
+  return process.env["GITHUB_API_URL"] || "https://api.github.com";
+}
