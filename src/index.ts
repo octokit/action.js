@@ -13,5 +13,6 @@ export const Octokit = Core.plugin(paginateRest, restEndpointMethods).defaults({
 });
 
 function getApiBaseUrl(): string {
+  /* istanbul ignore next */
   return process.env["GITHUB_API_URL"] || "https://api.github.com";
 }
