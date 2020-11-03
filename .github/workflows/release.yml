@@ -1,5 +1,5 @@
 name: Release
-on:
+on: .github/workflows/release.yml
   push:
     branches:
       - master
