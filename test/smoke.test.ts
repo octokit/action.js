@@ -87,11 +87,14 @@ describe("Smoke test", () => {
     });
 
     // See https://developer.github.com/v3/issues/#create-an-issue
-    const { data } = await octokit.request("POST /repos/:owner/:repo/issues", {
-      owner: "octocat",
-      repo: "hello-world",
-      title: "My test issue",
-    });
+    const { data } = await octokit.request(
+      "POST /repos/{owner}/{repo}/issues",
+      {
+        owner: "octocat",
+        repo: "hello-world",
+        title: "My test issue",
+      }
+    );
 
     expect(data).toStrictEqual({ ok: true });
   });
