@@ -27,7 +27,7 @@
     "@octokit/core": "^3.0.0",
     "@octokit/plugin-paginate-rest": "^2.2.4",
     "@octokit/plugin-rest-endpoint-methods": "4.2.1",
-    "@octokit/types": "^6.0.0"
+    "@octokit/types": "^6.0.3"
   },
   "devDependencies": {
     "@pika/pack": "^0.5.0",

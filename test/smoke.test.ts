@@ -71,7 +71,7 @@ describe("Smoke test", () => {
 
     const mock = fetchMock.sandbox().post(
       "path:/repos/octocat/hello-world/issues",
-      { ok: true },
+      { id: 1 },
       {
         body: {
           title: "My test issue",
@@ -87,13 +87,16 @@ describe("Smoke test", () => {
     });
 
     // See https://developer.github.com/v3/issues/#create-an-issue
-    const { data } = await octokit.request("POST /repos/:owner/:repo/issues", {
-      owner: "octocat",
-      repo: "hello-world",
-      title: "My test issue",
-    });
+    const { data } = await octokit.request(
+      "POST /repos/{owner}/{repo}/issues",
+      {
+        owner: "octocat",
+        repo: "hello-world",
+        title: "My test issue",
+      }
+    );
 
-    expect(data).toStrictEqual({ ok: true });
+    expect(data.id).toEqual(1);
   });
 
   it("README example: create issue using octokit.issues.create()", async () => {
@@ -102,7 +105,7 @@ describe("Smoke test", () => {
 
     const mock = fetchMock.sandbox().post(
       "path:/repos/octocat/hello-world/issues",
-      { ok: true },
+      { id: 1 },
       {
         body: {
           title: "My test issue",
@@ -124,7 +127,7 @@ describe("Smoke test", () => {
       title: "My test issue",
     });
 
-    expect(data).toStrictEqual({ ok: true });
+    expect(data.id).toEqual(1);
   });
 
   it("README example: create issue using octokit.graphql", async () => {
