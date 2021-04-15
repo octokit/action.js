@@ -47,10 +47,11 @@ jobs:
       - uses: actions/setup-node@v1
         with:
           version: 12
+      - run: npm install @octokit/action
       # Node.js script can be anywhere. A good convention is to put local GitHub Actions
       # into the `.github/actions` folder
       - run: node .github/actions/my-script.js
-        with:
+        env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -58,6 +59,8 @@ Setting `GITHUB_TOKEN` on either [`with:`](https://help.github.com/en/actions/re
 
 ```js
 // .github/actions/my-script.js
+const { Octokit } = require("@octokit/action");
+
 const octokit = new Octokit();
 
 // `octokit` is now authenticated using GITHUB_TOKEN
@@ -66,6 +69,8 @@ const octokit = new Octokit();
 ### Create an issue using REST API
 
 ```js
+const { Octokit } = require("@octokit/action");
+
 const octokit = new Octokit();
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
 
@@ -83,6 +88,8 @@ You can also use `octokit.issues.create({ owner, repo, title })`. See the [REST 
 ### Create an issue using GraphQL
 
 ```js
+const { Octokit } = require("@octokit/action");
+
 const octokit = new Octokit();
 const eventPayload = require(process.env.GITHUB_EVENT_PATH);
 const repositoryId = eventPayload.repository.node_id;
