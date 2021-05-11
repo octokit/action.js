@@ -122,8 +122,10 @@ Types for endpoint method parameters and responses are exported as `RestEndpoint
 ```ts
 import { RestEndpointMethodTypes } from `@octokit/action`;
 
-type ChecksCreateParams = RestEndpointMethodTypes["checks"]["create"]["parameters"];
-type ChecksCreateResponse = RestEndpointMethodTypes["checks"]["create"]["response"];
+type ChecksCreateParams =
+  RestEndpointMethodTypes["checks"]["create"]["parameters"];
+type ChecksCreateResponse =
+  RestEndpointMethodTypes["checks"]["create"]["response"];
 ```
 
 ## How it works
