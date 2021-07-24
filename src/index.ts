@@ -5,10 +5,12 @@ import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods
 export { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
+import { autoProxyAgent } from "./plugins";
 
 export const Octokit = Core.plugin(
   paginateRest,
-  legacyRestEndpointMethods
+  legacyRestEndpointMethods,
+  autoProxyAgent
 ).defaults({
   authStrategy: createActionAuth,
   baseUrl: getApiBaseUrl(),
