@@ -23,7 +23,7 @@ export const Octokit = Core.plugin(
     ...options,
     request: {
       agent: getHttpsProxyAgent(),
-      ...options.request
+      ...options.request,
     },
   };
 });

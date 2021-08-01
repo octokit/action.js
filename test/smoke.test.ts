@@ -219,45 +219,42 @@ describe("Smoke test", () => {
     }
   );
 
-  it(
-    "Uses the explicitly provided request.agent value if it's provided",
-    async () => {
-      process.env.GITHUB_TOKEN = "secret123";
-      process.env.GITHUB_ACTION = "test";
-      process.env.HTTPS_PROXY = "https://127.0.0.1";
+  it("Uses the explicitly provided request.agent value if it's provided", async () => {
+    process.env.GITHUB_TOKEN = "secret123";
+    process.env.GITHUB_ACTION = "test";
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
 
-      const fetchSandbox = fetchMock.sandbox();
-      const mock = fetchSandbox.post(
-        "path:/repos/octocat/hello-world/issues",
-        { id: 1 },
-        {
-          body: {
-            title: "My test issue",
-          },
-        }
-      );
-
-      expect(Octokit).toBeInstanceOf(Function);
-      const octokit = new Octokit({
-        auth: "secret123",
-        request: {
-          fetch: mock,
-          agent: null
+    const fetchSandbox = fetchMock.sandbox();
+    const mock = fetchSandbox.post(
+      "path:/repos/octocat/hello-world/issues",
+      { id: 1 },
+      {
+        body: {
+          title: "My test issue",
         },
-      });
-      await octokit.request("POST /repos/{owner}/{repo}/issues", {
-        owner: "octocat",
-        repo: "hello-world",
-        title: "My test issue",
-      });
+      }
+    );
 
-      expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+    expect(Octokit).toBeInstanceOf(Function);
+    const octokit = new Octokit({
+      auth: "secret123",
+      request: {
+        fetch: mock,
+        agent: null,
+      },
+    });
+    await octokit.request("POST /repos/{owner}/{repo}/issues", {
+      owner: "octocat",
+      repo: "hello-world",
+      title: "My test issue",
+    });
 
-      const [call] = fetchSandbox.calls();
-      expect(call[0]).toEqual(
-        "https://api.github.com/repos/octocat/hello-world/issues"
-      );
-      expect((call[1] as RequestOptions).agent).toBeNull();
-    }
-  );
+    expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+
+    const [call] = fetchSandbox.calls();
+    expect(call[0]).toEqual(
+      "https://api.github.com/repos/octocat/hello-world/issues"
+    );
+    expect((call[1] as RequestOptions).agent).toBeNull();
+  });
 });
