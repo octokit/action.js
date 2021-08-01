@@ -220,7 +220,7 @@ describe("Smoke test", () => {
   );
 
   it(
-    "Uses https-proxy-agent with %s env var",
+    "Uses the explicitly provided request.agent value if it's provided",
     async () => {
       process.env.GITHUB_TOKEN = "secret123";
       process.env.GITHUB_ACTION = "test";
