@@ -1,6 +1,10 @@
 import fetchMock from "fetch-mock";
+import { RequestOptions } from "https";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 import { Octokit } from "../src";
+
+jest.mock("https-proxy-agent");
 
 describe("Smoke test", () => {
   beforeEach(() => {
@@ -8,6 +12,8 @@ describe("Smoke test", () => {
     delete process.env.INPUT_GITHUB_TOKEN;
     delete process.env.GITHUB_ACTION;
     delete process.env.GITHUB_API_URL;
+    delete process.env.HTTPS_PROXY;
+    delete process.env.https_proxy;
   });
 
   it("happy path with GITHUB_TOKEN", () => {
@@ -171,4 +177,87 @@ describe("Smoke test", () => {
 
     expect(data).toStrictEqual({ ok: true });
   });
+
+  it.each(["HTTPS_PROXY", "https_proxy"])(
+    "Uses https-proxy-agent with %s env var",
+    async (https_proxy_env) => {
+      process.env.GITHUB_TOKEN = "secret123";
+      process.env.GITHUB_ACTION = "test";
+      process.env[https_proxy_env] = "https://127.0.0.1";
+
+      const fetchSandbox = fetchMock.sandbox();
+      const mock = fetchSandbox.post(
+        "path:/repos/octocat/hello-world/issues",
+        { id: 1 },
+        {
+          body: {
+            title: "My test issue",
+          },
+        }
+      );
+
+      expect(Octokit).toBeInstanceOf(Function);
+      const octokit = new Octokit({
+        auth: "secret123",
+        request: {
+          fetch: mock,
+        },
+      });
+      await octokit.request("POST /repos/{owner}/{repo}/issues", {
+        owner: "octocat",
+        repo: "hello-world",
+        title: "My test issue",
+      });
+
+      expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+
+      const [call] = fetchSandbox.calls();
+      expect(call[0]).toEqual(
+        "https://api.github.com/repos/octocat/hello-world/issues"
+      );
+      expect((call[1] as RequestOptions).agent).toBeInstanceOf(HttpsProxyAgent);
+    }
+  );
+
+  it(
+    "Uses the explicitly provided request.agent value if it's provided",
+    async () => {
+      process.env.GITHUB_TOKEN = "secret123";
+      process.env.GITHUB_ACTION = "test";
+      process.env.HTTPS_PROXY = "https://127.0.0.1";
+
+      const fetchSandbox = fetchMock.sandbox();
+      const mock = fetchSandbox.post(
+        "path:/repos/octocat/hello-world/issues",
+        { id: 1 },
+        {
+          body: {
+            title: "My test issue",
+          },
+        }
+      );
+
+      expect(Octokit).toBeInstanceOf(Function);
+      const octokit = new Octokit({
+        auth: "secret123",
+        request: {
+          fetch: mock,
+          agent: null
+        },
+      });
+      await octokit.request("POST /repos/{owner}/{repo}/issues", {
+        owner: "octocat",
+        repo: "hello-world",
+        title: "My test issue",
+      });
+
+      expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+
+      const [call] = fetchSandbox.calls();
+      expect(call[0]).toEqual(
+        "https://api.github.com/repos/octocat/hello-world/issues"
+      );
+      expect((call[1] as RequestOptions).agent).toBeNull();
+    }
+  );
 });
