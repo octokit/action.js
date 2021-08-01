@@ -17,13 +17,13 @@ const DEFAULTS = {
 export const Octokit = Core.plugin(
   paginateRest,
   legacyRestEndpointMethods
-).defaults(function buildDefaults(options: OctokitOptions) {
+).defaults(function buildDefaults(options: OctokitOptions): OctokitOptions {
   return {
-    ...options,
     ...DEFAULTS,
+    ...options,
     request: {
-      ...options.request,
       agent: getHttpsProxyAgent(),
+      ...options.request
     },
   };
 });
