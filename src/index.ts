@@ -5,19 +5,38 @@ import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods
 export { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
-import { autoProxyAgent } from "./plugins";
+import { OctokitOptions } from "@octokit/core/dist-types/types";
+import { HttpsProxyAgent } from "https-proxy-agent";
 
-export const Octokit = Core.plugin(
-  paginateRest,
-  legacyRestEndpointMethods,
-  autoProxyAgent
-).defaults({
+const DEFAULTS = {
   authStrategy: createActionAuth,
   baseUrl: getApiBaseUrl(),
   userAgent: `octokit-action.js/${VERSION}`,
+};
+
+export const Octokit = Core.plugin(
+  paginateRest,
+  legacyRestEndpointMethods
+).defaults(function buildDefaults(options: OctokitOptions) {
+  return {
+    ...options,
+    ...DEFAULTS,
+    request: {
+      ...options.request,
+      agent: getHttpsProxyAgent(),
+    },
+  };
 });
 
 function getApiBaseUrl(): string {
   /* istanbul ignore next */
   return process.env["GITHUB_API_URL"] || "https://api.github.com";
+}
+
+function getHttpsProxyAgent(): HttpsProxyAgent | undefined {
+  const proxy = process.env["HTTPS_PROXY"] || process.env["https_proxy"];
+
+  if (!proxy) return undefined;
+
+  return new HttpsProxyAgent(proxy);
 }
