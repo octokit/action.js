@@ -130,7 +130,7 @@ type ChecksCreateResponse =
 
 ## How it works
 
-`@octokit/action` is simply a [`@octokit/core`](https://github.com/octokit/core.js#readme) constructor, pre-authenticate using [`@octokit/auth-action](https://github.com/octokit/auth-action.js#readme).
+`@octokit/action` is simply a [`@octokit/core`](https://github.com/octokit/core.js#readme) constructor, pre-authenticate using [`@octokit/auth-action`](https://github.com/octokit/auth-action.js#readme).
 
 The source code is … simple: [`src/index.ts`](src/index.ts).
 
