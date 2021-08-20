@@ -1,6 +1,6 @@
 # action.js
 
-> GitHub API client for GitHub Actions
+> GitHub API client for GitHub Actions 
 
 [![@latest](https://img.shields.io/npm/v/@octokit/action.svg)](https://www.npmjs.com/package/@octokit/action)
 [![Build Status](https://github.com/octokit/action.js/workflows/Test/badge.svg)](https://github.com/octokit/action.js/actions)
@@ -28,7 +28,7 @@ const { Octokit } = require("@octokit/action");
 ```
 
 </td></tr>
-</tbody>
+</tbody> 
 </table>
 
 You can pass `secret.GITHUB_TOKEN` or any of your own secrets to a Node.js script. For example
