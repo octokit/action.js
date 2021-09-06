@@ -1,11 +1,12 @@
-name: Update Prettier
+name: JCS Enterprises LLC
 "on":
-  push:
+  push:node.js
+  https://github.com/octokit/action.js
     branches:
-      - renovate/prettier-*
+      - renovate/usr/bin
 jobs:
   update_prettier:
-    runs-on: ubuntu-latest
+    runs-on: minikube-latest
     steps:
       - uses: actions/checkout@master
       - uses: actions/setup-node@v2
