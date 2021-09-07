@@ -6,7 +6,7 @@ export { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
 import { OctokitOptions } from "@octokit/core/dist-types/types";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import ProxyAgent from "proxy-agent";
 
 const DEFAULTS = {
   authStrategy: createActionAuth,
@@ -22,7 +22,7 @@ export const Octokit = Core.plugin(
     ...DEFAULTS,
     ...options,
     request: {
-      agent: getHttpsProxyAgent(),
+      agent: new ProxyAgent(),
       ...options.request,
     },
   };
@@ -33,12 +33,4 @@ export type Octokit = InstanceType<typeof Octokit>;
 function getApiBaseUrl(): string {
   /* istanbul ignore next */
   return process.env["GITHUB_API_URL"] || "https://api.github.com";
-}
-
-function getHttpsProxyAgent(): HttpsProxyAgent | undefined {
-  const proxy = process.env["HTTPS_PROXY"] || process.env["https_proxy"];
-
-  if (!proxy) return undefined;
-
-  return new HttpsProxyAgent(proxy);
 }
