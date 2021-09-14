@@ -128,6 +128,10 @@ type ChecksCreateResponse =
   RestEndpointMethodTypes["checks"]["create"]["response"];
 ```
 
+### Proxy Servers
+
+If you use [self-hosted runners](https://docs.github.com/en/actions/hosting-your-own-runners/about-self-hosted-runners) and require a proxy server to access internet resources then you will need to ensure that you have correctly configured the runner for [proxy servers](https://docs.github.com/en/actions/hosting-your-own-runners/using-a-proxy-server-with-self-hosted-runners). `@octokit/action` will pick up the configured proxy server environment variables and configure `@octokit/core` with the correct `request.agent` using [proxy-agent](https://github.com/TooTallNate/node-proxy-agent/blob/master/index.js). If you need to supply a different `request.agent` then you should ensure that it handles proxy servers if needed.
+
 ## How it works
 
 `@octokit/action` is simply a [`@octokit/core`](https://github.com/octokit/core.js#readme) constructor, pre-authenticate using [`@octokit/auth-action`](https://github.com/octokit/auth-action.js#readme).

@@ -1,10 +1,10 @@
 import fetchMock from "fetch-mock";
 import { RequestOptions } from "https";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import ProxyAgent from "proxy-agent";
 
 import { Octokit } from "../src";
 
-jest.mock("https-proxy-agent");
+jest.mock("proxy-agent");
 
 describe("Smoke test", () => {
   beforeEach(() => {
@@ -209,13 +209,13 @@ describe("Smoke test", () => {
         title: "My test issue",
       });
 
-      expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+      expect(ProxyAgent).toHaveBeenCalled();
 
       const [call] = fetchSandbox.calls();
       expect(call[0]).toEqual(
         "https://api.github.com/repos/octocat/hello-world/issues"
       );
-      expect((call[1] as RequestOptions).agent).toBeInstanceOf(HttpsProxyAgent);
+      expect((call[1] as RequestOptions).agent).toBeInstanceOf(ProxyAgent);
     }
   );
 
@@ -249,7 +249,7 @@ describe("Smoke test", () => {
       title: "My test issue",
     });
 
-    expect(HttpsProxyAgent).toHaveBeenCalledWith("https://127.0.0.1");
+    expect(ProxyAgent).toHaveBeenCalled();
 
     const [call] = fetchSandbox.calls();
     expect(call[0]).toEqual(
