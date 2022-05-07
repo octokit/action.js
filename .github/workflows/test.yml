@@ -1,6 +1,12 @@
 name: Test
 "on":
-  - push
+  push:
+    branches:
+      - master
+  pull_request:
+    types:
+      - opened
+      - synchronize
 jobs:
   test:
     runs-on: ubuntu-latest
