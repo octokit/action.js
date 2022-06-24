@@ -6,7 +6,7 @@
   },
   "description": "GitHub API client for GitHub Actions",
   "scripts": {
-    "build": "pika build",
+    "build": "pika-pack build",
     "lint": "prettier --check '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "lint:fix": "prettier --write '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "pretest": "npm run -s lint",
