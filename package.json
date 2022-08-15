@@ -28,7 +28,7 @@
     "@octokit/core": "^4.0.0",
     "@octokit/plugin-paginate-rest": "^4.0.0",
     "@octokit/plugin-rest-endpoint-methods": "^6.0.0",
-    "@octokit/types": "^6.16.1",
+    "@octokit/types": "^7.0.0",
     "proxy-agent": "^5.0.0"
   },
   "devDependencies": {
