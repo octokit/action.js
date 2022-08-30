@@ -14,6 +14,20 @@ const DEFAULTS = {
   userAgent: `octokit-action.js/${VERSION}`,
 };
 
+function getProxyAgent() {
+  const httpProxy = process.env["HTTP_PROXY"] || process.env["http_proxy"];
+  if (httpProxy) {
+    return new HttpsProxyAgent(httpProxy);
+  }
+
+  const httpsProxy = process.env["HTTPS_PROXY"] || process.env["https_proxy"];
+  if (httpsProxy) {
+    return new HttpsProxyAgent(httpsProxy);
+  }
+
+  return undefined;
+}
+
 export const Octokit = Core.plugin(
   paginateRest,
   legacyRestEndpointMethods
@@ -22,7 +36,7 @@ export const Octokit = Core.plugin(
     ...DEFAULTS,
     ...options,
     request: {
-      agent: new HttpsProxyAgent(),
+      agent: getProxyAgent(),
       ...options.request,
     },
   };
