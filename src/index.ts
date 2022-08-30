@@ -14,7 +14,7 @@ const DEFAULTS = {
   userAgent: `octokit-action.js/${VERSION}`,
 };
 
-const getProxyAgent = () => {
+function getProxyAgent() {
   const httpProxy = process.env["HTTP_PROXY"] || process.env["http_proxy"];
   if (httpProxy) {
     return new HttpsProxyAgent(httpProxy);
@@ -26,7 +26,7 @@ const getProxyAgent = () => {
   }
 
   return undefined;
-};
+}
 
 export const Octokit = Core.plugin(
   paginateRest,
