@@ -1,6 +1,6 @@
 import fetchMock from "fetch-mock";
 import { RequestOptions } from "https";
-const HttpsProxyAgent = require("https-proxy-agent");
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 import { Octokit } from "../src";
 
