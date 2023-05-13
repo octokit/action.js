@@ -6,7 +6,7 @@ export { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
 import { OctokitOptions } from "@octokit/core/dist-types/types";
-const HttpsProxyAgent = require("https-proxy-agent");
+import { HttpsProxyAgent } from "https-proxy-agent";
 
 const DEFAULTS = {
   authStrategy: createActionAuth,
