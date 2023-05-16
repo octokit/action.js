@@ -1,3 +1,5 @@
+// Script to fix the package.json files map. This is needed because npm changed the file matching behavior in npm@9
+// https://github.com/octokit/action.js/pull/494
 const fs = require("fs");
 const path = require("path");
 const { EOL } = require("os");
