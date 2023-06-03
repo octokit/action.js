@@ -8,7 +8,7 @@ name: Test
       - opened
       - synchronize
 jobs:
-  test:
+  test_matrix:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -28,3 +28,13 @@ jobs:
         run: npm test
       - name: Test TypeScript
         run: npm run test:typescript
+  test:
+    runs-on: ubuntu-latest
+    needs: test_matrix
+    steps:
+      - run: exit 1
+        if: ${{ needs.test_matrix.result != 'success' }}
+      - uses: actions/checkout@v3
+      - run: npm ci
+      - run: npm run lint
+    if: ${{ always() }}
