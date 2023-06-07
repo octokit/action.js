@@ -2,10 +2,10 @@ import { Octokit as Core } from "@octokit/core";
 import { createActionAuth } from "@octokit/auth-action";
 import { paginateRest } from "@octokit/plugin-paginate-rest";
 import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
-export { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version";
-import { OctokitOptions } from "@octokit/core/dist-types/types";
+import type { OctokitOptions } from "@octokit/core/dist-types/types";
 import { HttpsProxyAgent } from "https-proxy-agent";
 
 const DEFAULTS = {
