@@ -32,7 +32,7 @@
     "https-proxy-agent": "^7.0.0"
   },
   "devDependencies": {
-    "@octokit/tsconfig": "^1.0.2",
+    "@octokit/tsconfig": "^2.0.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^18.0.0",
     "esbuild": "^0.17.19",
@@ -46,6 +46,14 @@
   },
   "jest": {
     "preset": "ts-jest",
+    "transform": {
+      "^.+\\.(ts|tsx)$": [
+        "ts-jest",
+        {
+          "tsconfig": "test/tsconfig.test.json"
+        }
+      ]
+    },
     "coverageThreshold": {
       "global": {
         "statements": 100,
@@ -88,6 +96,6 @@
     ]
   },
   "engines": {
-    "node": ">= 18"
+    "node": ">= 14"
   }
 }
