@@ -30,7 +30,7 @@ function getProxyAgent() {
 
 export const Octokit = Core.plugin(
   paginateRest,
-  legacyRestEndpointMethods
+  legacyRestEndpointMethods,
 ).defaults(function buildDefaults(options: OctokitOptions): OctokitOptions {
   return {
     ...DEFAULTS,

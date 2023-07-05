@@ -46,7 +46,7 @@ describe("Smoke test", () => {
 
     expect(Octokit).toBeInstanceOf(Function);
     expect(() => new Octokit()).toThrow(
-      "[@octokit/auth-action] `GITHUB_TOKEN` variable is not set. It must be set on either `env:` or `with:`. See https://github.com/octokit/auth-action.js#createactionauth"
+      "[@octokit/auth-action] `GITHUB_TOKEN` variable is not set. It must be set on either `env:` or `with:`. See https://github.com/octokit/auth-action.js#createactionauth",
     );
   });
 
@@ -55,7 +55,7 @@ describe("Smoke test", () => {
 
     expect(Octokit).toBeInstanceOf(Function);
     expect(() => new Octokit()).toThrow(
-      "[@octokit/auth-action] `GITHUB_ACTION` environment variable is not set. @octokit/auth-action is meant to be used in GitHub Actions only."
+      "[@octokit/auth-action] `GITHUB_ACTION` environment variable is not set. @octokit/auth-action is meant to be used in GitHub Actions only.",
     );
   });
 
@@ -82,7 +82,7 @@ describe("Smoke test", () => {
         body: {
           title: "My test issue",
         },
-      }
+      },
     );
 
     const octokit = new Octokit({
@@ -99,7 +99,7 @@ describe("Smoke test", () => {
         owner: "octocat",
         repo: "hello-world",
         title: "My test issue",
-      }
+      },
     );
 
     expect(data.id).toEqual(1);
@@ -116,7 +116,7 @@ describe("Smoke test", () => {
         body: {
           title: "My test issue",
         },
-      }
+      },
     );
 
     const octokit = new Octokit({
@@ -159,7 +159,7 @@ describe("Smoke test", () => {
             title: "My test issue",
           },
         },
-      }
+      },
     );
 
     const octokit = new Octokit({
@@ -193,7 +193,7 @@ describe("Smoke test", () => {
           body: {
             title: "My test issue",
           },
-        }
+        },
       );
 
       expect(Octokit).toBeInstanceOf(Function);
@@ -213,10 +213,10 @@ describe("Smoke test", () => {
 
       const [call] = fetchSandbox.calls();
       expect(call[0]).toEqual(
-        "https://api.github.com/repos/octocat/hello-world/issues"
+        "https://api.github.com/repos/octocat/hello-world/issues",
       );
       expect((call[1] as RequestOptions).agent).toBeInstanceOf(HttpsProxyAgent);
-    }
+    },
   );
 
   it("Uses the explicitly provided request.agent value if it's provided", async () => {
@@ -232,7 +232,7 @@ describe("Smoke test", () => {
         body: {
           title: "My test issue",
         },
-      }
+      },
     );
 
     expect(Octokit).toBeInstanceOf(Function);
@@ -253,7 +253,7 @@ describe("Smoke test", () => {
 
     const [call] = fetchSandbox.calls();
     expect(call[0]).toEqual(
-      "https://api.github.com/repos/octocat/hello-world/issues"
+      "https://api.github.com/repos/octocat/hello-world/issues",
     );
     expect((call[1] as RequestOptions).agent).toBeNull();
   });

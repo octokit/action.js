@@ -107,7 +107,7 @@ const response = await octokit.graphql(
   {
     repositoryId,
     title: "My test issue",
-  }
+  },
 );
 ```
 
