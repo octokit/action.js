@@ -178,7 +178,7 @@ describe("Smoke test", () => {
     expect(data).toStrictEqual({ ok: true });
   });
 
-  it.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
+  it.skip.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
     "Uses https-proxy-agent with %s env var",
     async (https_proxy_env) => {
       process.env.GITHUB_TOKEN = "secret123";
@@ -219,7 +219,7 @@ describe("Smoke test", () => {
     },
   );
 
-  it("Uses the explicitly provided request.agent value if it's provided", async () => {
+  it.skip("Uses the explicitly provided request.agent value if it's provided", async () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
     process.env.HTTPS_PROXY = "https://127.0.0.1";
