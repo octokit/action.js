@@ -1,8 +1,6 @@
 import fetchMock from "fetch-mock";
 import { Octokit } from "../src";
 
-jest.mock("https-proxy-agent");
-
 describe("Smoke test", () => {
   beforeEach(() => {
     delete process.env.GITHUB_TOKEN;
@@ -176,7 +174,7 @@ describe("Smoke test", () => {
   });
 
   it.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
-    "Uses https-proxy-agent with %s env var",
+    "Uses ProxyAgent with %s env var",
     async (https_proxy_env) => {
       process.env.GITHUB_TOKEN = "secret123";
       process.env.GITHUB_ACTION = "test";
