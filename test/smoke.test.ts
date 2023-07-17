@@ -2,7 +2,7 @@ import fetchMock from "fetch-mock";
 import { createServer } from "https";
 import { Octokit } from "../src";
 import * as OctokitModule from "../src";
-import { ProxyAgent /*fetch as undiciFetch*/ } from "undici";
+import { ProxyAgent } from "undici";
 
 jest.mock("undici", () => {
   return {
@@ -51,13 +51,13 @@ describe("Smoke test", () => {
   });
 
   it("should return a ProxyAgent for the httpProxy environment variable", () => {
-    process.env.HTTP_PROXY = "http://example.com";
+    process.env.HTTP_PROXY = "https://127.0.0.1";
     const agent = OctokitModule.getProxyAgent();
     expect(agent).toBeInstanceOf(ProxyAgent);
   });
 
   it("should return a ProxyAgent for the httpsProxy environment variable", () => {
-    process.env.HTTPS_PROXY = "https://example.com";
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
     const agent = OctokitModule.getProxyAgent();
     expect(agent).toBeInstanceOf(ProxyAgent);
   });
@@ -68,8 +68,8 @@ describe("Smoke test", () => {
   });
 
   it("should call undiciFetch with the correct dispatcher", async () => {
-    process.env.HTTPS_PROXY = "https://example.com";
-    const mockAgent = new ProxyAgent("https://example.com");
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
+    const mockAgent = new ProxyAgent("https://127.0.0.1");
 
     const spy = jest.spyOn(OctokitModule, "getProxyAgent");
     spy.mockReturnValueOnce(mockAgent);
