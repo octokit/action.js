@@ -4,6 +4,11 @@ import { Octokit } from "../src";
 import * as OctokitModule from "../src";
 import { ProxyAgent } from "undici";
 
+// mock undici such that we can substitute our own fetch implementation
+// but use the actual ProxyAgent implementation for most tests. the
+// exception is "should call undiciFetch with the correct dispatcher"
+// where we want to validate that a mocked ProxyAgent is passed through
+// to undici.fetch.
 jest.mock("undici", () => {
   return {
     fetch: jest.fn(),
@@ -69,12 +74,11 @@ describe("Smoke test", () => {
 
   it("should call undiciFetch with the correct dispatcher", async () => {
     process.env.HTTPS_PROXY = "https://127.0.0.1";
-    const mockAgent = new ProxyAgent("https://127.0.0.1");
+    const expectedAgent = new ProxyAgent("https://127.0.0.1");
 
-    const spy = jest.spyOn(OctokitModule, "getProxyAgent");
-    spy.mockReturnValueOnce(mockAgent);
-
-    // Mock undici.fetch to set the 'dispatcher' option manually
+    // mock undici.fetch to set the `dispatcher` option manually.
+    // this allows us to verify that `customFetch` correctly sets
+    // the dispatcher to `mockAgent` when HTTPS_PROXY is set.
     let dispatcher: any;
     (undici.fetch as jest.Mock).mockImplementation(
       (_url: string, options: any) => {
@@ -83,14 +87,12 @@ describe("Smoke test", () => {
         return Promise.resolve(new Response());
       },
     );
-
-    expect(OctokitModule.getProxyAgent()).toBe(mockAgent);
-
     await OctokitModule.customFetch("http://api.github.com", {});
 
-    expect(JSON.stringify(dispatcher)).toEqual(JSON.stringify(mockAgent));
-
-    spy.mockRestore();
+    expect(JSON.stringify(OctokitModule.getProxyAgent())).toBe(
+      JSON.stringify(expectedAgent),
+    );
+    expect(JSON.stringify(dispatcher)).toEqual(JSON.stringify(expectedAgent));
   });
 
   it("Uses the explicitly provided request.agent value if it's provided", async () => {
