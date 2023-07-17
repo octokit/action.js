@@ -1,5 +1,5 @@
 import fetchMock from "fetch-mock";
-import { createServer } from "https";
+import { createServer, type Server } from "https";
 import { Octokit } from "../src";
 import * as OctokitModule from "../src";
 import { ProxyAgent } from "undici";
@@ -13,7 +13,7 @@ jest.mock("undici", () => {
 const undici = jest.requireMock("undici");
 
 describe("Smoke test", () => {
-  let server: any;
+  let server: Server;
 
   beforeAll((done) => {
     server = createServer(
