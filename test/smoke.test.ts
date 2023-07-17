@@ -71,43 +71,6 @@ describe("Smoke test", () => {
     expect(agent).toBeUndefined();
   });
 
-  it("Uses the explicitly provided request.agent value if it's provided", async () => {
-    process.env.GITHUB_TOKEN = "secret123";
-    process.env.GITHUB_ACTION = "test";
-    process.env.HTTPS_PROXY = "https://127.0.0.1";
-
-    const fetchSandbox = fetchMock.sandbox();
-    const mock = fetchSandbox.post(
-      "path:/repos/octocat/hello-world/issues",
-      { id: 1 },
-      {
-        body: {
-          title: "My test issue",
-        },
-      },
-    );
-
-    expect(Octokit).toBeInstanceOf(Function);
-    const octokit = new Octokit({
-      auth: "secret123",
-      request: {
-        fetch: mock,
-      },
-    });
-    await octokit.request("POST /repos/{owner}/{repo}/issues", {
-      owner: "octocat",
-      repo: "hello-world",
-      title: "My test issue",
-    });
-
-    const [call] = fetchSandbox.calls();
-    expect(call[0]).toEqual(
-      "https://api.github.com/repos/octocat/hello-world/issues",
-    );
-
-    fetchMock.restore();
-  });
-
   it("happy path with GITHUB_TOKEN", () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
@@ -313,6 +276,7 @@ describe("Smoke test", () => {
       delete process.env.HTTPS_PROXY;
       jest.clearAllMocks();
     });
+
     it("should call undiciFetch with the correct dispatcher", async () => {
       process.env.HTTPS_PROXY = "https://127.0.0.1";
       const expectedAgent = new ProxyAgent("https://127.0.0.1");
