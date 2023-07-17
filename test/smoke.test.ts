@@ -70,9 +70,7 @@ describe("Smoke test", () => {
   it("should call undiciFetch with the correct dispatcher", async () => {
     process.env.HTTPS_PROXY = "https://example.com";
     const mockAgent = new ProxyAgent("https://example.com");
-    // (OctokitModule.getProxyAgent as jest.Mock).mockReturnValueOnce(mockAgent);
 
-    // Use jest.spyOn to create a mock
     const spy = jest.spyOn(OctokitModule, "getProxyAgent");
     spy.mockReturnValueOnce(mockAgent);
 
@@ -80,45 +78,22 @@ describe("Smoke test", () => {
     let dispatcher: any;
     (undici.fetch as jest.Mock).mockImplementation(
       (_url: string, options: any) => {
-        console.log("Inside mock undici.fetch"); // add this log
-        console.log(options); // log the options here
-
+        console.log("Inside mock undici.fetch");
+        console.log(options);
         dispatcher = options.dispatcher;
 
-        // Simulate a real fetch call
-        // This is your original mock implementation
         return Promise.resolve(new Response());
       },
     );
 
-    // Add logging or assertion to check return value of getProxyAgent
-    console.log(OctokitModule.getProxyAgent());
-    // Or
-    // expect(OctokitModule.getProxyAgent()).toBe(mockAgent);
+    expect(OctokitModule.getProxyAgent()).toBe(mockAgent);
 
     await OctokitModule.customFetch("http://api.github.com", {});
 
-    // Assert against the mocked 'dispatcher' value
-    expect(dispatcher).toBe(mockAgent);
-    // expect(dispatcher.uri).toBe("https://example.com");
+    expect(JSON.stringify(dispatcher)).toEqual(JSON.stringify(mockAgent));
+
     spy.mockRestore();
   });
-
-  // it("should call undiciFetch with the correct dispatcher", async () => {
-  //   const mockAgent = new ProxyAgent("https://example.com");
-  //   (OctokitModule.getProxyAgent as jest.Mock).mockReturnValueOnce(mockAgent);
-  //   // jest.spyOn(OctokitModule, "getProxyAgent").mockReturnValueOnce(mockAgent);
-  //   // OctokitModule.getProxyAgent = jest.fn().mockReturnValueOnce(mockAgent)
-
-  //   await OctokitModule.customFetch("http://api.github.com", {});
-
-  //   expect(undici.fetch).toHaveBeenCalledWith(
-  //     "http://api.github.com",
-  //     expect.objectContaining({
-  //       dispatcher: mockAgent,
-  //     }),
-  //   );
-  // });
 
   it("Uses the explicitly provided request.agent value if it's provided", async () => {
     process.env.GITHUB_TOKEN = "secret123";
@@ -357,28 +332,4 @@ describe("Smoke test", () => {
       );
     },
   );
-
-  // WIP
-  // it("test HTTPS_PROXY", async () => {
-  //   process.env.GITHUB_TOKEN = "secret123";
-  //   process.env.GITHUB_ACTION = "test";
-  //   process.env.HTTPS_PROXY = "https://localhost";
-
-  //   expect(Octokit).toBeInstanceOf(Function);
-  //   const octokit = new Octokit({
-  //     auth: "secret123",
-  //     baseUrl: "https://localhost:" + server.address().port,
-  //   });
-
-  //   await octokit.request("GET /", {
-  //     username: "octocat",
-  //   });
-
-  //   expect(ProxyAgent).toHaveBeenCalled();
-  //   expect(octokit).toHaveProperty("request");
-  // });
-
-  // afterAll((done) => {
-  //   server.close(done);
-  // });
 });
