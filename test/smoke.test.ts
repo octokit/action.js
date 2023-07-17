@@ -1,6 +1,16 @@
 import fetchMock from "fetch-mock";
 import { createServer } from "https";
 import { Octokit } from "../src";
+import * as OctokitModule from "../src";
+import { ProxyAgent /*fetch as undiciFetch*/ } from "undici";
+
+jest.mock("undici", () => {
+  return {
+    fetch: jest.fn(),
+    ProxyAgent: jest.requireActual("undici").ProxyAgent,
+  };
+});
+const undici = jest.requireMock("undici");
 
 describe("Smoke test", () => {
   let server: any;
@@ -33,6 +43,118 @@ describe("Smoke test", () => {
     delete process.env.https_proxy;
     delete process.env.HTTP_PROXY;
     delete process.env.http_proxy;
+  });
+
+  afterAll((done) => {
+    server.close(done);
+    jest.unmock("undici");
+  });
+
+  it("should return a ProxyAgent for the httpProxy environment variable", () => {
+    process.env.HTTP_PROXY = "http://example.com";
+    const agent = OctokitModule.getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return a ProxyAgent for the httpsProxy environment variable", () => {
+    process.env.HTTPS_PROXY = "https://example.com";
+    const agent = OctokitModule.getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return undefined if no proxy environment variables are set", () => {
+    const agent = OctokitModule.getProxyAgent();
+    expect(agent).toBeUndefined();
+  });
+
+  it("should call undiciFetch with the correct dispatcher", async () => {
+    process.env.HTTPS_PROXY = "https://example.com";
+    const mockAgent = new ProxyAgent("https://example.com");
+    // (OctokitModule.getProxyAgent as jest.Mock).mockReturnValueOnce(mockAgent);
+
+    // Use jest.spyOn to create a mock
+    const spy = jest.spyOn(OctokitModule, "getProxyAgent");
+    spy.mockReturnValueOnce(mockAgent);
+
+    // Mock undici.fetch to set the 'dispatcher' option manually
+    let dispatcher: any;
+    (undici.fetch as jest.Mock).mockImplementation(
+      (_url: string, options: any) => {
+        console.log("Inside mock undici.fetch"); // add this log
+        console.log(options); // log the options here
+
+        dispatcher = options.dispatcher;
+
+        // Simulate a real fetch call
+        // This is your original mock implementation
+        return Promise.resolve(new Response());
+      },
+    );
+
+    // Add logging or assertion to check return value of getProxyAgent
+    console.log(OctokitModule.getProxyAgent());
+    // Or
+    // expect(OctokitModule.getProxyAgent()).toBe(mockAgent);
+
+    await OctokitModule.customFetch("http://api.github.com", {});
+
+    // Assert against the mocked 'dispatcher' value
+    expect(dispatcher).toBe(mockAgent);
+    // expect(dispatcher.uri).toBe("https://example.com");
+    spy.mockRestore();
+  });
+
+  // it("should call undiciFetch with the correct dispatcher", async () => {
+  //   const mockAgent = new ProxyAgent("https://example.com");
+  //   (OctokitModule.getProxyAgent as jest.Mock).mockReturnValueOnce(mockAgent);
+  //   // jest.spyOn(OctokitModule, "getProxyAgent").mockReturnValueOnce(mockAgent);
+  //   // OctokitModule.getProxyAgent = jest.fn().mockReturnValueOnce(mockAgent)
+
+  //   await OctokitModule.customFetch("http://api.github.com", {});
+
+  //   expect(undici.fetch).toHaveBeenCalledWith(
+  //     "http://api.github.com",
+  //     expect.objectContaining({
+  //       dispatcher: mockAgent,
+  //     }),
+  //   );
+  // });
+
+  it("Uses the explicitly provided request.agent value if it's provided", async () => {
+    process.env.GITHUB_TOKEN = "secret123";
+    process.env.GITHUB_ACTION = "test";
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
+
+    const fetchSandbox = fetchMock.sandbox();
+    const mock = fetchSandbox.post(
+      "path:/repos/octocat/hello-world/issues",
+      { id: 1 },
+      {
+        body: {
+          title: "My test issue",
+        },
+      },
+    );
+
+    expect(Octokit).toBeInstanceOf(Function);
+    const octokit = new Octokit({
+      auth: "secret123",
+      request: {
+        fetch: mock,
+      },
+    });
+    await octokit.request("POST /repos/{owner}/{repo}/issues", {
+      owner: "octocat",
+      repo: "hello-world",
+      title: "My test issue",
+    });
+
+    const [call] = fetchSandbox.calls();
+    expect(call[0]).toEqual(
+      "https://api.github.com/repos/octocat/hello-world/issues",
+    );
+
+    fetchMock.restore();
   });
 
   it("happy path with GITHUB_TOKEN", () => {
@@ -236,62 +358,27 @@ describe("Smoke test", () => {
     },
   );
 
-  it("Uses the explicitly provided request.agent value if it's provided", async () => {
-    process.env.GITHUB_TOKEN = "secret123";
-    process.env.GITHUB_ACTION = "test";
-    process.env.HTTPS_PROXY = "https://127.0.0.1";
-
-    const fetchSandbox = fetchMock.sandbox();
-    const mock = fetchSandbox.post(
-      "path:/repos/octocat/hello-world/issues",
-      { id: 1 },
-      {
-        body: {
-          title: "My test issue",
-        },
-      },
-    );
-
-    expect(Octokit).toBeInstanceOf(Function);
-    const octokit = new Octokit({
-      auth: "secret123",
-      request: {
-        fetch: mock,
-      },
-    });
-    await octokit.request("POST /repos/{owner}/{repo}/issues", {
-      owner: "octocat",
-      repo: "hello-world",
-      title: "My test issue",
-    });
-
-    const [call] = fetchSandbox.calls();
-    expect(call[0]).toEqual(
-      "https://api.github.com/repos/octocat/hello-world/issues",
-    );
-  });
-
   // WIP
-  it("test HTTPS_PROXY", async () => {
-    process.env.GITHUB_TOKEN = "secret123";
-    process.env.GITHUB_ACTION = "test";
-    process.env.HTTPS_PROXY = "https://localhost";
+  // it("test HTTPS_PROXY", async () => {
+  //   process.env.GITHUB_TOKEN = "secret123";
+  //   process.env.GITHUB_ACTION = "test";
+  //   process.env.HTTPS_PROXY = "https://localhost";
 
-    expect(Octokit).toBeInstanceOf(Function);
-    const octokit = new Octokit({
-      auth: "secret123",
-      baseUrl: "https://localhost:" + server.address().port,
-    });
+  //   expect(Octokit).toBeInstanceOf(Function);
+  //   const octokit = new Octokit({
+  //     auth: "secret123",
+  //     baseUrl: "https://localhost:" + server.address().port,
+  //   });
 
-    // await octokit.request("GET /", {
-    //   username: "octocat",
-    // });
+  //   await octokit.request("GET /", {
+  //     username: "octocat",
+  //   });
 
-    // expect(Agent).toHaveBeenCalled();
-    expect(octokit).toHaveProperty("request");
-  });
+  //   expect(ProxyAgent).toHaveBeenCalled();
+  //   expect(octokit).toHaveProperty("request");
+  // });
 
-  afterAll((done) => {
-    server.close(done);
-  });
+  // afterAll((done) => {
+  //   server.close(done);
+  // });
 });

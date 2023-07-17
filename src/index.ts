@@ -14,7 +14,7 @@ const DEFAULTS = {
   userAgent: `octokit-action.js/${VERSION}`,
 };
 
-function getProxyAgent() {
+export function getProxyAgent() {
   const httpProxy = process.env["HTTP_PROXY"] || process.env["http_proxy"];
   if (httpProxy) {
     return new ProxyAgent(httpProxy);
@@ -28,7 +28,9 @@ function getProxyAgent() {
   return undefined;
 }
 
-const customFetch = async function (url: string, opts: any) {
+export const customFetch = async function (url: string, opts: any) {
+  console.log("inside customFetch");
+  console.log(opts);
   return await undiciFetch(url, {
     dispatcher: getProxyAgent(),
     ...opts,
