@@ -29,8 +29,6 @@ export function getProxyAgent() {
 }
 
 export const customFetch = async function (url: string, opts: any) {
-  console.log("inside customFetch");
-  console.log(opts);
   return await undiciFetch(url, {
     dispatcher: getProxyAgent(),
     ...opts,

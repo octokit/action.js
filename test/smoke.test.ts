@@ -78,8 +78,6 @@ describe("Smoke test", () => {
     let dispatcher: any;
     (undici.fetch as jest.Mock).mockImplementation(
       (_url: string, options: any) => {
-        console.log("Inside mock undici.fetch");
-        console.log(options);
         dispatcher = options.dispatcher;
 
         return Promise.resolve(new Response());
