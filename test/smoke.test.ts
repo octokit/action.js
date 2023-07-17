@@ -328,7 +328,7 @@ describe("Smoke test", () => {
         JSON.stringify(expectedAgent),
       );
 
-      // mock undici.fetch to set the `dispatcher` option manually.
+      // mock undici.fetch to extract the `dispatcher` option passed in.
       // this allows us to verify that `customFetch` correctly sets
       // the dispatcher to `expectedAgent` when HTTPS_PROXY is set.
       let dispatcher: any;
