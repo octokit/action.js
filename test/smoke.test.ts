@@ -1,6 +1,6 @@
 import fetchMock from "fetch-mock";
 import { createServer, type Server } from "https";
-import { Octokit } from "../src";
+import { Octokit, getProxyAgent } from "../src";
 import * as OctokitModule from "../src";
 import { ProxyAgent } from "undici";
 
@@ -57,18 +57,18 @@ describe("Smoke test", () => {
 
   it("should return a ProxyAgent for the httpProxy environment variable", () => {
     process.env.HTTP_PROXY = "https://127.0.0.1";
-    const agent = OctokitModule.getProxyAgent();
+    const agent = getProxyAgent();
     expect(agent).toBeInstanceOf(ProxyAgent);
   });
 
   it("should return a ProxyAgent for the httpsProxy environment variable", () => {
     process.env.HTTPS_PROXY = "https://127.0.0.1";
-    const agent = OctokitModule.getProxyAgent();
+    const agent = getProxyAgent();
     expect(agent).toBeInstanceOf(ProxyAgent);
   });
 
   it("should return undefined if no proxy environment variables are set", () => {
-    const agent = OctokitModule.getProxyAgent();
+    const agent = getProxyAgent();
     expect(agent).toBeUndefined();
   });
 
@@ -76,9 +76,15 @@ describe("Smoke test", () => {
     process.env.HTTPS_PROXY = "https://127.0.0.1";
     const expectedAgent = new ProxyAgent("https://127.0.0.1");
 
+    // spy on OctokitModule.getProxyAgent to verify that it's called
+    // when HTTPS_PROXY is set.
+    // const spy = jest
+    //   .spyOn(OctokitModule, "getProxyAgent")
+    //   .mockImplementation(() => expectedAgent);
+
     // mock undici.fetch to set the `dispatcher` option manually.
     // this allows us to verify that `customFetch` correctly sets
-    // the dispatcher to `mockAgent` when HTTPS_PROXY is set.
+    // the dispatcher to `expectedAgent` when HTTPS_PROXY is set.
     let dispatcher: any;
     (undici.fetch as jest.Mock).mockImplementation(
       (_url: string, options: any) => {
@@ -89,10 +95,13 @@ describe("Smoke test", () => {
     );
     await OctokitModule.customFetch("http://api.github.com", {});
 
-    expect(JSON.stringify(OctokitModule.getProxyAgent())).toBe(
-      JSON.stringify(expectedAgent),
-    );
+    // assert that getProxyAgentSpy was called and that the
+    // dispatcher was set correctly.
+    // expect(spy).toHaveBeenCalled();
+    expect(OctokitModule.getProxyAgent()).toBe(expectedAgent);
     expect(JSON.stringify(dispatcher)).toEqual(JSON.stringify(expectedAgent));
+
+    // spy.mockRestore();
   });
 
   it("Uses the explicitly provided request.agent value if it's provided", async () => {
