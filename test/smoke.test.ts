@@ -198,7 +198,7 @@ describe("Smoke test", () => {
     expect(JSON.stringify(data)).toStrictEqual(JSON.stringify({ ok: true }));
   });
 
-  it.skip.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
+  it.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
     "Uses ProxyAgent with %s env var",
     async (https_proxy_env) => {
       process.env.GITHUB_TOKEN = "secret123";
