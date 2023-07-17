@@ -236,7 +236,7 @@ describe("Smoke test", () => {
     },
   );
 
-  it.skip("Uses the explicitly provided request.agent value if it's provided", async () => {
+  it("Uses the explicitly provided request.agent value if it's provided", async () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
     process.env.HTTPS_PROXY = "https://127.0.0.1";
