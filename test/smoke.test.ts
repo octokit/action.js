@@ -54,6 +54,23 @@ describe("Smoke test", () => {
     jest.unmock("undici");
   });
 
+  it("should return a ProxyAgent for the httpProxy environment variable", () => {
+    process.env.HTTP_PROXY = "https://127.0.0.1";
+    const agent = getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return a ProxyAgent for the httpsProxy environment variable", () => {
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
+    const agent = getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return undefined if no proxy environment variables are set", () => {
+    const agent = getProxyAgent();
+    expect(agent).toBeUndefined();
+  });
+
   it("happy path with GITHUB_TOKEN", () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
