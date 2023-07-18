@@ -6,7 +6,7 @@ export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-meth
 
 import { VERSION } from "./version";
 import type { OctokitOptions } from "@octokit/core/dist-types/types";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 const DEFAULTS = {
   authStrategy: createActionAuth,
@@ -14,19 +14,26 @@ const DEFAULTS = {
   userAgent: `octokit-action.js/${VERSION}`,
 };
 
-function getProxyAgent() {
+export function getProxyAgent() {
   const httpProxy = process.env["HTTP_PROXY"] || process.env["http_proxy"];
   if (httpProxy) {
-    return new HttpsProxyAgent(httpProxy);
+    return new ProxyAgent(httpProxy);
   }
 
   const httpsProxy = process.env["HTTPS_PROXY"] || process.env["https_proxy"];
   if (httpsProxy) {
-    return new HttpsProxyAgent(httpsProxy);
+    return new ProxyAgent(httpsProxy);
   }
 
   return undefined;
 }
+
+export const customFetch = async function (url: string, opts: any) {
+  return await undiciFetch(url, {
+    dispatcher: getProxyAgent(),
+    ...opts,
+  });
+};
 
 export const Octokit = Core.plugin(
   paginateRest,
@@ -36,7 +43,7 @@ export const Octokit = Core.plugin(
     ...DEFAULTS,
     ...options,
     request: {
-      agent: getProxyAgent(),
+      fetch: customFetch,
       ...options.request,
     },
   };

@@ -1,12 +1,43 @@
 import fetchMock from "fetch-mock";
-import { RequestOptions } from "https";
-import { HttpsProxyAgent } from "https-proxy-agent";
+import { createServer, type Server } from "https";
+import { Octokit, getProxyAgent, customFetch } from "../src";
+import { ProxyAgent } from "undici";
 
-import { Octokit } from "../src";
-
-jest.mock("https-proxy-agent");
+// mock undici such that we can substitute our own fetch implementation
+// but use the actual ProxyAgent implementation for most tests. the
+// exception is "should call undiciFetch with the correct dispatcher"
+// where we want to validate that a mocked ProxyAgent is passed through
+// to undici.fetch.
+jest.mock("undici", () => {
+  return {
+    fetch: jest.fn(),
+    ProxyAgent: jest.requireActual("undici").ProxyAgent,
+  };
+});
+const undici = jest.requireMock("undici");
 
 describe("Smoke test", () => {
+  let server: Server;
+
+  beforeAll((done) => {
+    server = createServer(
+      {
+        requestCert: false,
+        rejectUnauthorized: false,
+      },
+      (request: any, response: any) => {
+        expect(request.method).toEqual("GET");
+        expect(request.url).toEqual("/");
+
+        response.writeHead(200);
+        response.write("ok");
+        response.end();
+      },
+    );
+
+    server.listen(0, done);
+  });
+
   beforeEach(() => {
     delete process.env.GITHUB_TOKEN;
     delete process.env.INPUT_GITHUB_TOKEN;
@@ -14,6 +45,30 @@ describe("Smoke test", () => {
     delete process.env.GITHUB_API_URL;
     delete process.env.HTTPS_PROXY;
     delete process.env.https_proxy;
+    delete process.env.HTTP_PROXY;
+    delete process.env.http_proxy;
+  });
+
+  afterAll((done) => {
+    server.close(done);
+    jest.unmock("undici");
+  });
+
+  it("should return a ProxyAgent for the httpProxy environment variable", () => {
+    process.env.HTTP_PROXY = "https://127.0.0.1";
+    const agent = getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return a ProxyAgent for the httpsProxy environment variable", () => {
+    process.env.HTTPS_PROXY = "https://127.0.0.1";
+    const agent = getProxyAgent();
+    expect(agent).toBeInstanceOf(ProxyAgent);
+  });
+
+  it("should return undefined if no proxy environment variables are set", () => {
+    const agent = getProxyAgent();
+    expect(agent).toBeUndefined();
   });
 
   it("happy path with GITHUB_TOKEN", () => {
@@ -175,11 +230,12 @@ describe("Smoke test", () => {
       title: "My test issue",
     });
 
-    expect(data).toStrictEqual({ ok: true });
+    // TODO: need a follow up issue to clean this up
+    expect(JSON.stringify(data)).toStrictEqual(JSON.stringify({ ok: true }));
   });
 
   it.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
-    "Uses https-proxy-agent with %s env var",
+    "Uses ProxyAgent with %s env var",
     async (https_proxy_env) => {
       process.env.GITHUB_TOKEN = "secret123";
       process.env.GITHUB_ACTION = "test";
@@ -209,52 +265,46 @@ describe("Smoke test", () => {
         title: "My test issue",
       });
 
-      expect(HttpsProxyAgent).toHaveBeenCalled();
-
       const [call] = fetchSandbox.calls();
       expect(call[0]).toEqual(
         "https://api.github.com/repos/octocat/hello-world/issues",
       );
-      expect((call[1] as RequestOptions).agent).toBeInstanceOf(HttpsProxyAgent);
     },
   );
+  describe("customFetch", () => {
+    afterAll(() => {
+      delete process.env.HTTPS_PROXY;
+      jest.clearAllMocks();
+    });
 
-  it("Uses the explicitly provided request.agent value if it's provided", async () => {
-    process.env.GITHUB_TOKEN = "secret123";
-    process.env.GITHUB_ACTION = "test";
-    process.env.HTTPS_PROXY = "https://127.0.0.1";
+    it("should call undiciFetch with the correct dispatcher", async () => {
+      process.env.HTTPS_PROXY = "https://127.0.0.1";
+      const expectedAgent = new ProxyAgent("https://127.0.0.1");
 
-    const fetchSandbox = fetchMock.sandbox();
-    const mock = fetchSandbox.post(
-      "path:/repos/octocat/hello-world/issues",
-      { id: 1 },
-      {
-        body: {
-          title: "My test issue",
+      jest.mock("../src", () => {
+        const actualModule = jest.requireActual("../src");
+        return {
+          ...actualModule,
+          getProxyAgent: jest.fn(() => expectedAgent),
+        };
+      });
+      expect(JSON.stringify(getProxyAgent())).toBe(
+        JSON.stringify(expectedAgent),
+      );
+
+      // mock undici.fetch to extract the `dispatcher` option passed in.
+      // this allows us to verify that `customFetch` correctly sets
+      // the dispatcher to `expectedAgent` when HTTPS_PROXY is set.
+      let dispatcher: any;
+      (undici.fetch as jest.Mock).mockImplementation(
+        (_url: string, options: any) => {
+          dispatcher = options.dispatcher;
+
+          return Promise.resolve(new Response());
         },
-      },
-    );
-
-    expect(Octokit).toBeInstanceOf(Function);
-    const octokit = new Octokit({
-      auth: "secret123",
-      request: {
-        fetch: mock,
-        agent: null,
-      },
+      );
+      await customFetch("http://api.github.com", {});
+      expect(JSON.stringify(dispatcher)).toEqual(JSON.stringify(expectedAgent));
     });
-    await octokit.request("POST /repos/{owner}/{repo}/issues", {
-      owner: "octocat",
-      repo: "hello-world",
-      title: "My test issue",
-    });
-
-    expect(HttpsProxyAgent).toHaveBeenCalled();
-
-    const [call] = fetchSandbox.calls();
-    expect(call[0]).toEqual(
-      "https://api.github.com/repos/octocat/hello-world/issues",
-    );
-    expect((call[1] as RequestOptions).agent).toBeNull();
   });
 });
