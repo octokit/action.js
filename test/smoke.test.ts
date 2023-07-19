@@ -230,8 +230,7 @@ describe("Smoke test", () => {
       title: "My test issue",
     });
 
-    // TODO: need a follow up issue to clean this up
-    expect(JSON.stringify(data)).toStrictEqual(JSON.stringify({ ok: true }));
+    expect(data).toEqual({ ok: true });
   });
 
   it.each(["HTTPS_PROXY", "https_proxy", "HTTP_PROXY", "http_proxy"])(
