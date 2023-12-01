@@ -1,6 +1,6 @@
 import fetchMock from "fetch-mock";
 import { createServer, type Server } from "node:https";
-import { Octokit, getProxyAgent, customFetch } from "../src";
+import { Octokit, getProxyAgent, customFetch } from "../src/index.ts";
 import { ProxyAgent } from "undici";
 
 // mock undici such that we can substitute our own fetch implementation
