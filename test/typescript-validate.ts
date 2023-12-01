@@ -1,4 +1,4 @@
-import { Octokit } from "../src";
+import { Octokit } from "../src/index.ts";
 
 // ************************************************************
 // THIS CODE IS NOT EXECUTED. IT IS JUST FOR TYPECHECKING
