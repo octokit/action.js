@@ -29,7 +29,7 @@
     "@octokit/plugin-paginate-rest": "^9.0.0",
     "@octokit/plugin-rest-endpoint-methods": "^10.0.0",
     "@octokit/types": "^12.0.0",
-    "undici": "^5.0.0"
+    "undici": "^6.0.0"
   },
   "devDependencies": {
     "@octokit/tsconfig": "^2.0.0",
