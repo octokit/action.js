@@ -46,7 +46,7 @@ jobs:
       # Install Node 20
       - uses: actions/setup-node@v4
         with:
-          version: 20
+          version: '20'
       - run: npm install @octokit/action
       # Node.js script can be anywhere. A good convention is to put local GitHub Actions
       # into the `.github/actions` folder
