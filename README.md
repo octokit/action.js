@@ -42,11 +42,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       # Check out code using git
-      - uses: actions/checkout@v2
-      # Install Node 12
-      - uses: actions/setup-node@v1
+      - uses: actions/checkout@v4
+      # Install Node 20
+      - uses: actions/setup-node@v4
         with:
-          version: 12
+          node-version: 20
       - run: npm install @octokit/action
       # Node.js script can be anywhere. A good convention is to put local GitHub Actions
       # into the `.github/actions` folder
