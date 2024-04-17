@@ -5,13 +5,14 @@
     "access": "public",
     "provenance": true
   },
+  "type": "module",
   "description": "GitHub API client for GitHub Actions",
   "scripts": {
     "build": "node scripts/build.mjs && tsc -p tsconfig.json",
     "lint": "prettier --check '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "lint:fix": "prettier --write '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "pretest": "npm run -s lint",
-    "test": "jest --coverage",
+    "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --coverage",
     "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --esModuleInterop --allowImportingTsExtensions test/typescript-validate.ts"
   },
   "repository": "github:octokit/action.js",
@@ -46,11 +47,15 @@
     "typescript": "^5.0.0"
   },
   "jest": {
+    "extensionsToTreatAsEsm": [
+      ".ts"
+    ],
     "transform": {
       "^.+\\.(ts|tsx)$": [
         "ts-jest",
         {
-          "tsconfig": "test/tsconfig.test.json"
+          "tsconfig": "test/tsconfig.test.json",
+          "useESM": true
         }
       ]
     },
@@ -62,6 +67,11 @@
         "lines": 100
       }
     },
+    "testPathIgnorePatterns": [
+      "<rootDir>/node_modules/",
+      "<rootDir>/test/deno/"
+    ],
+    "testEnvironment": "node",
     "moduleNameMapper": {
       "^(.+)\\.jsx?$": "$1"
     }
