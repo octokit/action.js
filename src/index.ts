@@ -1,11 +1,14 @@
 import { Octokit as Core } from "@octokit/core";
 import { createActionAuth } from "@octokit/auth-action";
-import { paginateRest } from "@octokit/plugin-paginate-rest";
+import {
+  paginateRest,
+  type PaginateInterface,
+} from "@octokit/plugin-paginate-rest";
 import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
 export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version.js";
-import type { OctokitOptions } from "@octokit/core/types";
+import type { Constructor, OctokitOptions } from "@octokit/core/types";
 import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 const DEFAULTS = {
@@ -35,19 +38,23 @@ export const customFetch = async function (url: string, opts: any) {
   });
 };
 
-export const Octokit = Core.plugin(
-  paginateRest,
-  legacyRestEndpointMethods,
-).defaults(function buildDefaults(options: OctokitOptions): OctokitOptions {
-  return {
-    ...DEFAULTS,
-    ...options,
-    request: {
-      fetch: customFetch,
-      ...options.request,
-    },
-  };
-});
+export const Octokit: typeof Core &
+  Constructor<
+    {
+      paginate: PaginateInterface;
+    } & ReturnType<typeof legacyRestEndpointMethods>
+  > = Core.plugin(paginateRest, legacyRestEndpointMethods).defaults(
+  function buildDefaults(options: OctokitOptions): OctokitOptions {
+    return {
+      ...DEFAULTS,
+      ...options,
+      request: {
+        fetch: customFetch,
+        ...options.request,
+      },
+    };
+  },
+);
 
 export type Octokit = InstanceType<typeof Octokit>;
 
