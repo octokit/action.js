@@ -1,15 +1,17 @@
 import { Octokit as Core } from "@octokit/core";
+import type { Constructor, OctokitOptions } from "@octokit/core/types";
 import { createActionAuth } from "@octokit/auth-action";
 import {
   paginateRest,
   type PaginateInterface,
 } from "@octokit/plugin-paginate-rest";
 import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
-export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 import { VERSION } from "./version.js";
-import type { Constructor, OctokitOptions } from "@octokit/core/types";
-import { fetch as undiciFetch, ProxyAgent } from "undici";
+
+export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+
 
 const DEFAULTS = {
   authStrategy: createActionAuth,
