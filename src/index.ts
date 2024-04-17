@@ -5,7 +5,7 @@ import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods
 export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 import { VERSION } from "./version.js";
-import type { OctokitOptions } from "@octokit/core/dist-types/types.js";
+import type { OctokitOptions } from "@octokit/core/types";
 import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 const DEFAULTS = {
