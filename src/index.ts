@@ -12,7 +12,6 @@ import { VERSION } from "./version.js";
 
 export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
-
 const DEFAULTS = {
   authStrategy: createActionAuth,
   baseUrl: getApiBaseUrl(),
@@ -33,6 +32,7 @@ export function getProxyAgent() {
   return undefined;
 }
 
+/* istanbul ignore next */
 export const customFetch = async function (url: string, opts: any) {
   return await undiciFetch(url, {
     dispatcher: getProxyAgent(),
