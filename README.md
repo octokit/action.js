@@ -23,13 +23,18 @@ Node
 Install with `npm install @octokit/action`
 
 ```js
-const { Octokit } = require("@octokit/action");
-// or: import { Octokit } from "@octokit/action";
+import { Octokit } from "@octokit/action";
 ```
 
 </td></tr>
 </tbody>
 </table>
+
+> [!IMPORTANT]
+> As we use [conditional exports](https://nodejs.org/api/packages.html#conditional-exports), you will need to adapt your `tsconfig.json` by setting `"moduleResolution": "node16", "module": "node16"`.
+>
+> See the TypeScript docs on [package.json "exports"](https://www.typescriptlang.org/docs/handbook/modules/reference.html#packagejson-exports).<br>
+> See this [helpful guide on transitioning to ESM](https://gist.github.com/sindresorhus/a39789f98801d908bbc7ff3ecc99d99c) from [@sindresorhus](https://github.com/sindresorhus)
 
 You can pass `secret.GITHUB_TOKEN` or any of your own secrets to a Node.js script. For example
 
@@ -59,7 +64,7 @@ Setting `GITHUB_TOKEN` on either [`with:`](https://help.github.com/en/actions/re
 
 ```js
 // .github/actions/my-script.js
-const { Octokit } = require("@octokit/action");
+import { Octokit } from "@octokit/action";
 
 const octokit = new Octokit();
 
@@ -69,7 +74,7 @@ const octokit = new Octokit();
 ### Create an issue using REST API
 
 ```js
-const { Octokit } = require("@octokit/action");
+import { Octokit } from "@octokit/action";
 
 const octokit = new Octokit();
 const [owner, repo] = process.env.GITHUB_REPOSITORY.split("/");
@@ -88,7 +93,7 @@ You can also use `octokit.issues.create({ owner, repo, title })`. See the [REST 
 ### Create an issue using GraphQL
 
 ```js
-const { Octokit } = require("@octokit/action");
+import { Octokit } from "@octokit/action";
 
 const octokit = new Octokit();
 const eventPayload = require(process.env.GITHUB_EVENT_PATH);
