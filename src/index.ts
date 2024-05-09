@@ -1,12 +1,16 @@
 import { Octokit as Core } from "@octokit/core";
+import type { Constructor, OctokitOptions } from "@octokit/core/types";
 import { createActionAuth } from "@octokit/auth-action";
-import { paginateRest } from "@octokit/plugin-paginate-rest";
+import {
+  paginateRest,
+  type PaginateInterface,
+} from "@octokit/plugin-paginate-rest";
 import { legacyRestEndpointMethods } from "@octokit/plugin-rest-endpoint-methods";
-export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
+import { fetch as undiciFetch, ProxyAgent } from "undici";
 
 import { VERSION } from "./version.js";
-import type { OctokitOptions } from "@octokit/core/dist-types/types.js";
-import { fetch as undiciFetch, ProxyAgent } from "undici";
+
+export type { RestEndpointMethodTypes } from "@octokit/plugin-rest-endpoint-methods";
 
 const DEFAULTS = {
   authStrategy: createActionAuth,
@@ -28,6 +32,7 @@ export function getProxyAgent() {
   return undefined;
 }
 
+/* istanbul ignore next */
 export const customFetch = async function (url: string, opts: any) {
   return await undiciFetch(url, {
     dispatcher: getProxyAgent(),
@@ -35,19 +40,23 @@ export const customFetch = async function (url: string, opts: any) {
   });
 };
 
-export const Octokit = Core.plugin(
-  paginateRest,
-  legacyRestEndpointMethods,
-).defaults(function buildDefaults(options: OctokitOptions): OctokitOptions {
-  return {
-    ...DEFAULTS,
-    ...options,
-    request: {
-      fetch: customFetch,
-      ...options.request,
-    },
-  };
-});
+export const Octokit: typeof Core &
+  Constructor<
+    {
+      paginate: PaginateInterface;
+    } & ReturnType<typeof legacyRestEndpointMethods>
+  > = Core.plugin(paginateRest, legacyRestEndpointMethods).defaults(
+  function buildDefaults(options: OctokitOptions): OctokitOptions {
+    return {
+      ...DEFAULTS,
+      ...options,
+      request: {
+        fetch: customFetch,
+        ...options.request,
+      },
+    };
+  },
+);
 
 export type Octokit = InstanceType<typeof Octokit>;
 
