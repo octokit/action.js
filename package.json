@@ -13,7 +13,7 @@
     "lint:fix": "prettier --write '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "pretest": "npm run -s lint",
     "test": "NODE_OPTIONS=\"$NODE_OPTIONS --experimental-vm-modules\" jest --coverage",
-    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --esModuleInterop --module node16 --allowImportingTsExtensions test/typescript-validate.ts"
+    "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --esModuleInterop --module node16 --allowImportingTsExtensions --exactOptionalPropertyTypes --strict test/typescript-validate.ts"
   },
   "repository": "github:octokit/action.js",
   "keywords": [
@@ -34,7 +34,7 @@
     "undici": "^6.0.0"
   },
   "devDependencies": {
-    "@octokit/tsconfig": "^3.0.0",
+    "@octokit/tsconfig": "^4.0.0",
     "@types/jest": "^29.0.0",
     "@types/node": "^20.0.0",
     "esbuild": "^0.24.0",
