@@ -12,7 +12,7 @@
     "lint": "prettier --check '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "lint:fix": "prettier --write '{src,test}/**/*.{js,ts,css,less,scss,vue,json,gql,md}' README.md package.json",
     "pretest": "npm run -s lint",
-    "test": "vitest --ui --coverage",
+    "test": "vitest --run --coverage",
     "test:typescript": "npx tsc --noEmit --declaration --noUnusedLocals --esModuleInterop --module node16 --allowImportingTsExtensions --exactOptionalPropertyTypes --strict test/typescript-validate.ts"
   },
   "repository": "github:octokit/action.js",
