@@ -7,27 +7,25 @@ import {
   type RequestInit,
   Response,
   ProxyAgent,
+  default as undici,
 } from "undici";
-import { jest } from "@jest/globals";
+import {
+  vi,
+  afterAll,
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+} from "vitest";
 
-// mock undici such that we can substitute our own fetch implementation
-// but use the actual ProxyAgent implementation for most tests. the
-// exception is "should call undiciFetch with the correct dispatcher"
-// where we want to validate that a mocked ProxyAgent is passed through
-// to undici.fetch.
-jest.unstable_mockModule("undici", () => {
-  return {
-    __esModule: true,
-    fetch: jest.fn(),
-    ProxyAgent,
-  };
-});
-const undici = await import("undici");
+let expectedAgent: ProxyAgent;
 
 describe("Smoke test", () => {
   let server: Server;
 
-  beforeAll((done) => {
+  beforeAll(() => {
     server = createServer(
       {
         requestCert: false,
@@ -43,7 +41,7 @@ describe("Smoke test", () => {
       },
     );
 
-    server.listen(0, done);
+    server.listen(0);
   });
 
   beforeEach(() => {
@@ -57,9 +55,9 @@ describe("Smoke test", () => {
     delete process.env.http_proxy;
   });
 
-  afterAll((done) => {
-    server.close(done);
-    jest.unmock("undici");
+  afterAll(() => {
+    server.close();
+    vi.unmock("undici");
   });
 
   it("should return a ProxyAgent for the httpProxy environment variable", () => {
@@ -281,18 +279,19 @@ describe("Smoke test", () => {
   describe("customFetch", () => {
     afterAll(() => {
       delete process.env.HTTPS_PROXY;
-      jest.clearAllMocks();
+      vi.clearAllMocks();
     });
 
     it("should call undiciFetch with the correct dispatcher", async () => {
       process.env.HTTPS_PROXY = "https://127.0.0.1";
-      const expectedAgent = new ProxyAgent("https://127.0.0.1");
-      const actualModule = await import("../src/index.js");
-      jest.unstable_mockModule("../src/index.js", () => {
+      expectedAgent = new ProxyAgent("https://127.0.0.1");
+
+      vi.doMock("../src/index.js", async () => {
+        const actualModule = await vi.importActual("../src/index.js");
         return {
           __esModule: true,
           ...actualModule,
-          getProxyAgent: jest.fn(() => expectedAgent),
+          getProxyAgent: vi.fn(() => expectedAgent),
           customFetch: async function (url: string, opts: any) {
             return await undici.fetch(url, {
               dispatcher: getProxyAgent(),
@@ -315,7 +314,7 @@ describe("Smoke test", () => {
       // this allows us to verify that `customFetch` correctly sets
       // the dispatcher to `expectedAgent` when HTTPS_PROXY is set.
       let dispatcher: Dispatcher | undefined;
-      (undici.fetch as jest.Mock<typeof undici.fetch>).mockImplementation(
+      vi.spyOn(undici, "fetch").mockImplementation(
         (_url: RequestInfo, options?: RequestInit) => {
           dispatcher = options?.dispatcher;
 
