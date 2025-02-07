@@ -136,7 +136,7 @@ describe("Smoke test", () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
 
-    const mock = fetchMock.sandbox().post(
+    const mock = fetchMock.createInstance().post(
       "path:/repos/octocat/hello-world/issues",
       { id: 1 },
       {
@@ -149,7 +149,7 @@ describe("Smoke test", () => {
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -170,7 +170,7 @@ describe("Smoke test", () => {
     process.env.GITHUB_TOKEN = "secret123";
     process.env.GITHUB_ACTION = "test";
 
-    const mock = fetchMock.sandbox().post(
+    const mock = fetchMock.createInstance().post(
       "path:/repos/octocat/hello-world/issues",
       { id: 1 },
       {
@@ -183,7 +183,7 @@ describe("Smoke test", () => {
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -209,7 +209,7 @@ describe("Smoke test", () => {
       }
     }`;
 
-    const mock = fetchMock.sandbox().post(
+    const mock = fetchMock.createInstance().post(
       "path:/graphql",
       { data: { ok: true } },
       {
@@ -226,7 +226,7 @@ describe("Smoke test", () => {
     const octokit = new Octokit({
       auth: "secret123",
       request: {
-        fetch: mock,
+        fetch: mock.fetchHandler,
       },
     });
 
@@ -246,8 +246,8 @@ describe("Smoke test", () => {
       process.env.GITHUB_ACTION = "test";
       process.env[https_proxy_env] = "https://127.0.0.1";
 
-      const fetchSandbox = fetchMock.sandbox();
-      const mock = fetchSandbox.post(
+      const fetchcreateInstance = fetchMock.createInstance();
+      const mock = fetchcreateInstance.post(
         "path:/repos/octocat/hello-world/issues",
         { id: 1 },
         {
@@ -261,7 +261,7 @@ describe("Smoke test", () => {
       const octokit = new Octokit({
         auth: "secret123",
         request: {
-          fetch: mock,
+          fetch: mock.fetchHandler,
         },
       });
       await octokit.request("POST /repos/{owner}/{repo}/issues", {
@@ -270,8 +270,8 @@ describe("Smoke test", () => {
         title: "My test issue",
       });
 
-      const [call] = fetchSandbox.calls();
-      expect(call[0]).toEqual(
+      const calls = fetchcreateInstance.callHistory.callLogs;
+      expect(calls[0].args[0]).toEqual(
         "https://api.github.com/repos/octocat/hello-world/issues",
       );
     },
