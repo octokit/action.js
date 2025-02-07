@@ -270,8 +270,8 @@ describe("Smoke test", () => {
         title: "My test issue",
       });
 
-      const calls = fetchcreateInstance.callHistory.callLogs;
-      expect(calls[0].args[0]).toEqual(
+      const [call] = fetchcreateInstance.callHistory.callLogs;
+      expect(call.args[0]).toEqual(
         "https://api.github.com/repos/octocat/hello-world/issues",
       );
     },
