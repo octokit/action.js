@@ -43,7 +43,7 @@
     "fetch-mock": "npm:@gr2m/fetch-mock@9.11.0-pull-request-644.1",
     "glob": "^11.0.0",
     "prettier": "3.5.1",
-    "semantic-release-plugin-update-version-in-files": "^1.0.0",
+    "semantic-release-plugin-update-version-in-files": "^2.0.0",
     "typescript": "^5.0.0",
     "vitest": "^3.0.0"
   },
