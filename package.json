@@ -27,11 +27,11 @@
   "author": "Gregor Martynus (https://twitter.com/gr2m)",
   "license": "MIT",
   "dependencies": {
-    "@octokit/auth-action": "^6.0.0",
-    "@octokit/core": "^7.0.0",
-    "@octokit/plugin-paginate-rest": "^13.0.0",
-    "@octokit/plugin-rest-endpoint-methods": "^16.0.0",
-    "@octokit/types": "^14.0.0",
+    "@octokit/auth-action": "^6.0.2",
+    "@octokit/core": "^7.0.6",
+    "@octokit/plugin-paginate-rest": "^14.0.0",
+    "@octokit/plugin-rest-endpoint-methods": "^17.0.0",
+    "@octokit/types": "^16.0.0",
     "undici": "^6.19.8"
   },
   "devDependencies": {
