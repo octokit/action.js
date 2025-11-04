@@ -60,6 +60,7 @@ export const Octokit: typeof Core &
 
 export type Octokit = InstanceType<typeof Octokit>;
 
+/* v8 ignore next -- @preserve */
 function getApiBaseUrl(): string {
   return process.env["GITHUB_API_URL"] || "https://api.github.com";
 }
