@@ -32,7 +32,7 @@ export function getProxyAgent() {
   return undefined;
 }
 
-/* v8 ignore next 6 */
+/* v8 ignore next -- @preserve */
 export const customFetch = async function (url: string, opts: any) {
   return await undiciFetch(url, {
     dispatcher: getProxyAgent(),
@@ -61,6 +61,5 @@ export const Octokit: typeof Core &
 export type Octokit = InstanceType<typeof Octokit>;
 
 function getApiBaseUrl(): string {
-  /* v8 ignore next */
   return process.env["GITHUB_API_URL"] || "https://api.github.com";
 }
