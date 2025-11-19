@@ -41,9 +41,9 @@
     "@vitest/ui": "^4.0.0",
     "esbuild": "^0.25.0",
     "fetch-mock": "npm:@gr2m/fetch-mock@9.11.0-pull-request-644.1",
-    "glob": "^13.0.0",
     "prettier": "3.6.2",
     "semantic-release-plugin-update-version-in-files": "^2.0.0",
+    "tinyglobby": "^0.2.15",
     "typescript": "^5.0.0",
     "vitest": "^4.0.0"
   },
